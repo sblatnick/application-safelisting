@@ -29,9 +29,39 @@ case "$1" in
       done
       exit
     ;;
-  run) ##build and install
+  run) ##run == pre, make, install
+      $0 pre
+      $0 make
+      $0 install
+    ;;
+  pre) ##Check for dependencies (rpm)
+      log "pre: checking for packages"
+      packages=(
+        libattr
+        attr
+        linux-firmware
+        kernel
+        kernel-headers
+        kernel-devel
+        mpfr
+        libmpc
+        cpp
+        libgomp
+        #glibc-*?
+        gcc
+      )
+      rpm -q ${packages[*]}
+
+      log "pre: ready"
+    ;;
+  make) ##build the kernel module
       log "make"
       make
+      log "make done"
+    ;;
+  install) ##Install the kernel module
+      log "install"
+      log "install done"
     ;;
   *) ##rsync to root@hostname and build
       NODE=${1}
