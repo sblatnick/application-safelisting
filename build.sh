@@ -3,6 +3,8 @@ shopt -s extglob #set extended globbing
 set -e
 cd ${0%/*}
 
+kernel=$(uname -r)
+
 #Utils:
 function error() {
   >&2 echo -e "$(date +'%F %T') \033[31mERROR\033[0m: $@"
@@ -14,6 +16,8 @@ function log() {
 function warn() {
   >&2 echo -e "$(date +'%F %T')  \033[33;1mWARN\033[0m: $@"
 }
+
+#trap 'error "$BASH_SOURCE \"$BASH_COMMAND\"";exit' ERR
 
 case "$1" in
   '')
@@ -40,17 +44,25 @@ case "$1" in
         libattr
         attr
         linux-firmware
-        kernel
-        kernel-headers
-        kernel-devel
+        kernel-${kernel}
+        kernel-headers-${kernel}
+        kernel-devel-${kernel}
         mpfr
         libmpc
         cpp
         libgomp
-        #glibc-*?
+        glibc
         gcc
       )
-      rpm -q ${packages[*]}
+      IFS=$'\n'
+      set +e
+      missing=$(rpm -q ${packages[*]} | grep 'is not installed' | cut -d' ' -f2)
+      set -e
+      for missed in $missing
+      do
+        log "yum install -y $missed"
+        yum install -y $missed
+      done
 
       log "pre: ready"
     ;;
