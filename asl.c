@@ -1,16 +1,20 @@
 /*  
  * Application Safelisting Kernel Module
  */
-#include <linux/module.h>	/* Needed by all modules */
-#include <linux/kernel.h>	/* Needed for KERN_INFO */
+#include <linux/module.h>
+#include <linux/kernel.h>
+#include <linux/init.h>
 
-int init_module(void)
+static int __init init_asl(void)
 {
-  printk(KERN_INFO "Hello world 1.\n");
+  printk(KERN_INFO "ASL: Hello world 1.\n");
   return 0;
 }
 
-void cleanup_module(void)
+static void __exit cleanup_asl(void)
 {
-  printk(KERN_INFO "Goodbye world 1.\n");
+  printk(KERN_INFO "ASL: Goodbye world 1.\n");
 }
+
+module_init(init_asl);
+module_exit(cleanup_asl);

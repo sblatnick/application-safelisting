@@ -23,7 +23,28 @@ case "$1" in
     ;;
   pre) ##Check for dependencies (rpm)
       log "pre: checking for packages"
+      #FIXME: remove unneeded packages
       packages=(
+        rsync
+        epel-release
+        yum-utils
+        rpmdevtools
+        man-db
+        autoconf
+        automake
+        libtool
+        make
+        telnet
+        openssl
+        net-tools
+        wget
+        less
+        vim-enhanced
+        which
+        bzip2
+        genisoimage
+        createrepo
+        squashfs-tools
         libattr
         attr
         linux-firmware
@@ -36,6 +57,11 @@ case "$1" in
         libgomp
         glibc
         gcc
+        jq
+        p7zip
+        p7zip-plugins
+        the_silver_searcher
+        expect
       )
       IFS=$'\n'
       set +e
@@ -55,8 +81,10 @@ case "$1" in
       log "make done"
     ;;
   install) ##Install the kernel module
+      set +e
       log "remove old"
       rmmod asl
+      set -e
       log "install"
       insmod asl.ko
       log "install done"
