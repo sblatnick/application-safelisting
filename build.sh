@@ -56,6 +56,7 @@ case "$1" in
         cpp
         libgomp
         glibc
+        glibc-headers
         gcc
         jq
         p7zip
