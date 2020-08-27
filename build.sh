@@ -55,7 +55,10 @@ case "$1" in
       log "make done"
     ;;
   install) ##Install the kernel module
+      log "remove old"
+      rmmod asl
       log "install"
+      insmod asl.ko
       log "install done"
     ;;
   *) ##rsync to root@hostname and build
