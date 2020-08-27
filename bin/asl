@@ -1,0 +1,5 @@
+#!/bin/bash
+cd ${0%/*}/../
+source lib/utils.sh
+
+log "${0##*/} $@"

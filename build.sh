@@ -1,23 +1,6 @@
 #!/bin/bash
-shopt -s extglob #set extended globbing
-set -e
 cd ${0%/*}
-
-kernel=$(uname -r)
-
-#Utils:
-function error() {
-  >&2 echo -e "$(date +'%F %T') \033[31mERROR\033[0m: $@"
-  exit 1
-}
-function log() {
-  echo -e "$(date +'%F %T')   \033[0;1mLOG\033[0m: $@"
-}
-function warn() {
-  >&2 echo -e "$(date +'%F %T')  \033[33;1mWARN\033[0m: $@"
-}
-
-#trap 'error "$BASH_SOURCE \"$BASH_COMMAND\"";exit' ERR
+source lib/utils.sh
 
 case "$1" in
   '')
@@ -44,9 +27,9 @@ case "$1" in
         libattr
         attr
         linux-firmware
-        kernel-${kernel}
-        kernel-headers-${kernel}
-        kernel-devel-${kernel}
+        kernel-${KERNEL}
+        kernel-headers-${KERNEL}
+        kernel-devel-${KERNEL}
         mpfr
         libmpc
         cpp
