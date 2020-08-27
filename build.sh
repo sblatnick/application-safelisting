@@ -77,6 +77,10 @@ case "$1" in
       log "pre: ready"
     ;;
   make) ##build the kernel module
+      set +e
+      log "make clean"
+      make clean
+      set -e
       log "make"
       make
       log "make done"

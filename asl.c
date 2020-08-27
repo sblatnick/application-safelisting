@@ -4,6 +4,8 @@
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
+#include <linux/string.h>
+#include <linux/slab.h>
 
 #define DRIVER_AUTHORS "Steven Blatnick, Nate Ewan"
 #define DRIVER_DESC    "Application Safelisting Kernel Module"
@@ -11,12 +13,11 @@
 
 static void l(char *str)
 {
-  char *output;
-  strcat(output, LOG_PREFIX);
+  char *output = kmalloc(sizeof(*str) + sizeof(LOG_PREFIX), GFP_KERNEL);
+  strcpy(output, LOG_PREFIX);
   strcat(output, str);
-  strcat(output, "\n");
-  printk(KERN_INFO &output);
-  free(output);
+  printk(KERN_INFO "%s\n", output);
+  kfree(output);
 }
 
 static int __init init_asl(void)
