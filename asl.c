@@ -1,5 +1,5 @@
 /*  
- * Application Whitelisting Kernel Module
+ * Application Safelisting Kernel Module
  */
 #include <linux/module.h>	/* Needed by all modules */
 #include <linux/kernel.h>	/* Needed for KERN_INFO */

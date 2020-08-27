@@ -1,6 +1,6 @@
-# application-whitelisting
+# application-safelisting
 
-This project is intended to create a simple-yet-effective application whitelisting
+This project is intended to create a simple-yet-effective application safelisting
 kernel module.
 
     ./build.sh run   #builds/installs locally

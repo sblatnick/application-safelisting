@@ -1,4 +1,4 @@
-obj-m += aw.ko
+obj-m += asl.ko
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules

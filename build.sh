@@ -79,8 +79,8 @@ case "$1" in
       NODE=${1}
       log "Copy to ${NODE}"
       cd ../
-      rsync -uaP --no-o --no-g --exclude='.*' application-whitelisting root@${NODE}:~/
-      ssh root@${NODE} "~/application-whitelisting/build.sh run"
+      rsync -uaP --no-o --no-g --exclude='.*' application-safelisting root@${NODE}:~/
+      ssh root@${NODE} "~/application-safelisting/build.sh run"
     ;;
 esac
 
