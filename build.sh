@@ -17,7 +17,7 @@ case "$1" in
       exit
     ;;
   run) ##run == pre, make, install
-      $0 pre
+      #$0 pre
       $0 make
       $0 install
     ;;
