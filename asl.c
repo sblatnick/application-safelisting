@@ -27,7 +27,8 @@ static void l(const char *str)
 }
 
 /* OVERRIDES */
-asmlinkage int (*old_execve)(const char *pathname, char *const argv[], char *const envp[]);
+typedef asmlinkage int (*ptr_execve)(const char *pathname, char *const argv[], char *const envp[]);
+ptr_execve old_execve;
 asmlinkage int asl_execve(const char *pathname, char *const argv[], char *const envp[]) {
   l(pathname);
   return old_execve(pathname, argv, envp);
@@ -37,14 +38,15 @@ static int __init init_asl(void)
 {
   l("init");
   sys_call_table = (sys_call_ptr_t *)kallsyms_lookup_name("sys_call_table");
-  old_execve = sys_call_table[__NR_execve];
-
+  l("1 store old");
+  old_execve = (ptr_execve)sys_call_table[__NR_execve];
+  l("2 allow write");
   write_cr0(read_cr0() & (~0x10000));
-
+  l("3 store new");
   sys_call_table[__NR_execve] = (sys_call_ptr_t)asl_execve;
-
+  l("4 disallow write");
   write_cr0(read_cr0() | 0x10000);
-
+  l("5 return");
   return 0;
 }
 
