@@ -8,6 +8,9 @@
 #include <linux/slab.h>
 #include <linux/kallsyms.h>
 #include <linux/unistd.h>
+#include <linux/sched.h>
+#include <linux/fs.h>
+#include <linux/export.h>
 
 #define DRIVER_AUTHORS "Steven Blatnick, Nate Ewan"
 #define DRIVER_DESC    "Application Safelisting Kernel Module"
@@ -27,11 +30,12 @@ static void l(const char *str)
 }
 
 /* OVERRIDES */
-typedef asmlinkage int (*ptr_execve)(const char *pathname, char *const argv[], char *const envp[]);
+typedef asmlinkage int (*ptr_execve)(const char *pathname, const char __user *const __user *argv, const char __user *const __user *envp);
 ptr_execve old_execve;
-asmlinkage int asl_execve(const char *pathname, char *const argv[], char *const envp[]) {
+asmlinkage int asl_execve(const char *pathname, const char __user *const __user *argv, const char __user *const __user *envp) {
   l(pathname);
-  return old_execve(pathname, argv, envp);
+  //return old_execve(pathname, argv, envp);
+  return do_execve(getname(pathname), argv, envp);
 }
 
 static int __init init_asl(void)
@@ -43,7 +47,7 @@ static int __init init_asl(void)
   l("2 allow write");
   write_cr0(read_cr0() & (~0x10000));
   l("3 store new");
-  sys_call_table[__NR_execve] = (ptr_execve)asl_execve;
+  sys_call_table[__NR_execve] = (void *)asl_execve;
   l("4 disallow write");
   write_cr0(read_cr0() | 0x10000);
   l("5 return");
@@ -56,7 +60,7 @@ static void __exit cleanup_asl(void)
 
   write_cr0(read_cr0() & (~0x10000));
 
-  sys_call_table[__NR_execve] = (ptr_execve)old_execve;
+  sys_call_table[__NR_execve] = (void *)old_execve;
 
   write_cr0(read_cr0() | 0x10000);
 }

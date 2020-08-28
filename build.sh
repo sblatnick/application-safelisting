@@ -89,6 +89,8 @@ case "$1" in
       set +e
       log "remove old"
       rmmod asl
+      log "exit early"
+      exit;
       set -e
       log "install"
       insmod asl.ko
