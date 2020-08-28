@@ -13,10 +13,11 @@
 #define DRIVER_DESC    "Application Safelisting Kernel Module"
 #define LOG_PREFIX     "ASL: "
 
+typedef void (*sys_call_ptr_t)(void);
 static sys_call_ptr_t *sys_call_table;
 
 /* UTILS */
-static void l(char *str)
+static void l(const char *str)
 {
   char *output = kmalloc(sizeof(*str) + sizeof(LOG_PREFIX), GFP_KERNEL);
   strcpy(output, LOG_PREFIX);
@@ -26,7 +27,7 @@ static void l(char *str)
 }
 
 /* OVERRIDES */
-asmlinkage int old_execve(const char *pathname, char *const argv[], char *const envp[]);
+asmlinkage int (*old_execve)(const char *pathname, char *const argv[], char *const envp[]);
 asmlinkage int asl_execve(const char *pathname, char *const argv[], char *const envp[]) {
   l(pathname);
   return old_execve(pathname, argv, envp);
@@ -36,7 +37,7 @@ static int __init init_asl(void)
 {
   l("init");
   sys_call_table = (sys_call_ptr_t *)kallsyms_lookup_name("sys_call_table");
-  old_execve = (asl_execve)sys_call_table[__NR_execve];
+  old_execve = sys_call_table[__NR_execve];
 
   write_cr0(read_cr0() & (~0x10000));
 
