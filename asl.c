@@ -43,7 +43,7 @@ static int __init init_asl(void)
   l("2 allow write");
   write_cr0(read_cr0() & (~0x10000));
   l("3 store new");
-  sys_call_table[__NR_execve] = (sys_call_ptr_t)asl_execve;
+  sys_call_table[__NR_execve] = (ptr_execve)asl_execve;
   l("4 disallow write");
   write_cr0(read_cr0() | 0x10000);
   l("5 return");
@@ -56,7 +56,7 @@ static void __exit cleanup_asl(void)
 
   write_cr0(read_cr0() & (~0x10000));
 
-  sys_call_table[__NR_execve] = (sys_call_ptr_t)old_execve;
+  sys_call_table[__NR_execve] = (ptr_execve)old_execve;
 
   write_cr0(read_cr0() | 0x10000);
 }
